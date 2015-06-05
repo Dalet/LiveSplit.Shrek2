@@ -1,11 +1,11 @@
 <updates>
-    <update version="1.0.0">
+    <update version="1.0.1">
         <files>
             <file path="Components/LiveSplit.Shrek2.dll" status="changed"/>
         </files>
         <changelog>
             <change>
-                Initial release.
+                Fixed a bug in the settings.
             </change>
         </changelog>
     </update>

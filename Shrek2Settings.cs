@@ -44,6 +44,8 @@ namespace LiveSplit.Shrek2
             foreach (string map in GameMemory.splits)
             {
                 Maps[map] = DEFAULT_MAP;
+                CheckBox checkbox = this.flp_AnyPercentSplits.Controls.Find("chk_" + map, true)[0] as CheckBox;
+                checkbox.Checked = Maps[map];
             }
         }
 
@@ -101,9 +103,9 @@ namespace LiveSplit.Shrek2
             XmlElement mapsNode = settings["Maps"];
             foreach (string map in GameMemory.splits)
             {
-                Maps[map] = (mapsNode != null) ? ParseBool(mapsNode, MAP_PREFIX + map, DEFAULT_MAP) : DEFAULT_MAP;
-                CheckBox checkbox = this.flp_AnyPercentSplits.Controls.Find("chk_" + map, true)[0] as CheckBox;
-                checkbox.Checked = Maps[map];
+                    Maps[map] = (mapsNode != null) ? ParseBool(mapsNode, MAP_PREFIX + map, DEFAULT_MAP) : DEFAULT_MAP;
+                    CheckBox checkbox = this.flp_AnyPercentSplits.Controls.Find("chk_" + map, true)[0] as CheckBox;
+                    checkbox.Checked = Maps[map];
             }
         }
 

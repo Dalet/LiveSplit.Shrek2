@@ -33,6 +33,8 @@ namespace LiveSplit.Shrek2
         public event EventHandler OnNewGame;
         public delegate void SplitCompletedEventHandler(object sender, string type);
         public event SplitCompletedEventHandler OnSplitCompleted;
+        public event EventHandler OnLoadStart;
+        public event EventHandler OnLoadEnd;
 
         private Task _thread;
         private CancellationTokenSource _cancelSource;
@@ -40,7 +42,8 @@ namespace LiveSplit.Shrek2
         private List<int> _ignorePIDs;
 
         private DeepPointer _logBufferPtr;
-        private DeepPointer _logBufferCursor;
+        private DeepPointer _logBufferCursorPtr;
+        private DeepPointer _isLoadingPtr;
 
         public uint frameCounter = 0;
         private enum ExpectedExeSizes
@@ -63,7 +66,8 @@ namespace LiveSplit.Shrek2
             SplitStates = new bool[splits.Count];
 
             _logBufferPtr = new DeepPointer(0x000566B4, 0x50);
-            _logBufferCursor = new DeepPointer(0x000566B4, 0x4c);
+            _logBufferCursorPtr = new DeepPointer(0x000566B4, 0x4c);
+            _isLoadingPtr = new DeepPointer(0x00012570, 0x40, 0x68);
 
             resetSplitStates();
 
@@ -123,6 +127,7 @@ namespace LiveSplit.Shrek2
                     string prevBuf = String.Empty;
                     string currentMap = String.Empty;
                     string prevCurrentMap = String.Empty;
+                    bool prevIsLoading = false;
 
                     while (!game.HasExited)
                     {
@@ -130,8 +135,12 @@ namespace LiveSplit.Shrek2
                         _logBufferPtr.Deref(game, out buf, 4096);
 
                         int bufCursor;
-                        _logBufferCursor.Deref(game, out bufCursor);
-
+                        _logBufferCursorPtr.Deref(game, out bufCursor);
+                                                
+                        int ret;
+                        _isLoadingPtr.Deref(game, out ret);
+                        bool isLoading = ret == 2;
+                        
                         string log = String.Empty;
 
                         if ((!buf.Equals(prevBuf) && !prevBuf.Equals(String.Empty)))
@@ -254,10 +263,37 @@ namespace LiveSplit.Shrek2
 
                         }
 
+                        if (isLoading != prevIsLoading)
+                        {
+                            if (isLoading)
+                            {
+                                Trace.WriteLine("[NoLoads] Loading started - " + frameCounter);
+                                _uiThread.Post(d =>
+                                {
+                                    if (this.OnLoadStart != null)
+                                    {
+                                        this.OnLoadStart(this, EventArgs.Empty);
+                                    }
+                                }, null);
+                            }
+                            else
+                            {
+                                Trace.WriteLine("[NoLoads] Loading started - " + frameCounter);
+                                _uiThread.Post(d =>
+                                {
+                                    if (this.OnLoadEnd != null)
+                                    {
+                                        this.OnLoadEnd(this, EventArgs.Empty);
+                                    }
+                                }, null);
+                            }
+                        }
+
                         frameCounter++;
                         prevBuf = buf;
                         prevBufCursor = bufCursor;
                         prevCurrentMap = currentMap;
+                        prevIsLoading = isLoading;
 
                         Thread.Sleep(SLEEP_TIME);
 

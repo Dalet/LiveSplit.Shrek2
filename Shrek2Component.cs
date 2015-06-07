@@ -43,6 +43,8 @@ namespace LiveSplit.Shrek2
             _gameMemory.OnMainMenuLoad += gameMemory_OnMainMenuLoad;
             _gameMemory.OnNewGame += gameMemory_OnNewGame;
             _gameMemory.OnSplitCompleted += gameMemory_OnSplitCompleted;
+            _gameMemory.OnLoadStart += gameMemory_OnLoadStart;
+            _gameMemory.OnLoadEnd += gameMemory_OnLoadEnd;
             state.OnStart += State_OnStart;
             _gameMemory.StartMonitoring();
         }
@@ -57,7 +59,6 @@ namespace LiveSplit.Shrek2
             {
                 _gameMemory.Stop();
             }
-
         }
 
         void State_OnStart(object sender, EventArgs e)
@@ -83,23 +84,6 @@ namespace LiveSplit.Shrek2
             }
         }
 
-        void gameMemory_OnLoad(object sender, TimeSpan time)
-        {
-            if (_state.CurrentPhase == TimerPhase.Running)
-            {
-                if (_state.CurrentTime.GameTime - time >= new TimeSpan(0))
-                {
-                    Trace.WriteLine(String.Format("[NoLoads] {1} of loading removed from game time. - {0}", _gameMemory.frameCounter, time));
-                    _state.SetGameTime(_state.CurrentTime.GameTime - time);
-                }
-                else
-                {
-                    Trace.WriteLine(String.Format("[NoLoads] Didn't remove loads. Reason: result is negative - {0}", _gameMemory.frameCounter));
-                    _state.SetGameTime(new TimeSpan(0));
-                }
-            }
-        }
-
         void gameMemory_OnSplitCompleted(object sender, string split)
         {
             int index = GameMemory.splits.IndexOf(split);
@@ -119,6 +103,16 @@ namespace LiveSplit.Shrek2
             }
             else
                 Debug.WriteLine("[NoLoads] Didn't split " + split + ". Reason: not enabled in the settings");
+        }
+
+        void gameMemory_OnLoadStart(object sender, EventArgs e)
+        {
+            _state.IsGameTimePaused = true;
+        }
+
+        void gameMemory_OnLoadEnd(object sender, EventArgs e)
+        {
+            _state.IsGameTimePaused = false;
         }
 
         public override XmlNode GetSettings(XmlDocument document)

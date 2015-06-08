@@ -278,7 +278,7 @@ namespace LiveSplit.Shrek2
                             }
                             else
                             {
-                                Trace.WriteLine("[NoLoads] Loading started - " + frameCounter);
+                                Trace.WriteLine("[NoLoads] Loading ended - " + frameCounter);
                                 _uiThread.Post(d =>
                                 {
                                     if (this.OnLoadEnd != null)

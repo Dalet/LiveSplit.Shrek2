@@ -1,4 +1,17 @@
 <updates>
+    <update version="1.1.1">
+        <files>
+            <file path="Components/LiveSplit.Shrek2.dll" status="changed"/>
+        </files>
+        <changelog>
+            <change>
+                New loading pointer.
+            </change>
+            <change>
+                Include saving in loads.
+            </change>
+        </changelog>
+    </update>
     <update version="1.1">
         <files>
             <file path="Components/LiveSplit.Shrek2.dll" status="changed"/>

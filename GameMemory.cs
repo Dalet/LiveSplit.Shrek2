@@ -44,6 +44,7 @@ namespace LiveSplit.Shrek2
         private DeepPointer _logBufferPtr;
         private DeepPointer _logBufferCursorPtr;
         private DeepPointer _isLoadingPtr;
+        private DeepPointer _isSavingPtr;
 
         public uint frameCounter = 0;
         private enum ExpectedExeSizes
@@ -67,7 +68,8 @@ namespace LiveSplit.Shrek2
 
             _logBufferPtr = new DeepPointer(0x000566B4, 0x50);
             _logBufferCursorPtr = new DeepPointer(0x000566B4, 0x4c);
-            _isLoadingPtr = new DeepPointer(0x00012570, 0x40, 0x68);
+            _isLoadingPtr = new DeepPointer("Engine.dll", 0x000012E0, 0x5a4, 0x68);
+            _isSavingPtr = new DeepPointer("Core.dll", 0x001CA8B8, 0xbc, 0x50c, 0x400);
 
             resetSplitStates();
 
@@ -139,7 +141,11 @@ namespace LiveSplit.Shrek2
                                                 
                         int ret;
                         _isLoadingPtr.Deref(game, out ret);
-                        bool isLoading = ret == 2;
+
+                        int isSaving;
+                        _isSavingPtr.Deref(game, out isSaving);
+
+                        bool isLoading = (ret == 2 || isSaving == 256);
                         
                         string log = String.Empty;
 
@@ -330,6 +336,9 @@ namespace LiveSplit.Shrek2
             {
                 return null;
             }
+
+            if (game.Modules.Cast<ProcessModule>().FirstOrDefault(m => System.IO.Path.GetFileName(m.FileName).ToLower() == "core.dll") == null)
+                return null;
 
             if (game.MainModule.ModuleMemorySize != (int)ExpectedExeSizes.v433)
             {

@@ -1,12 +1,12 @@
-﻿using System;
+﻿using LiveSplit.ComponentUtil;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Diagnostics;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Text.RegularExpressions;
-using System.Globalization;
 
 namespace LiveSplit.Shrek2
 {
@@ -138,7 +138,7 @@ namespace LiveSplit.Shrek2
 
                         int bufCursor;
                         _logBufferCursorPtr.Deref(game, out bufCursor);
-                                                
+
                         int ret;
                         _isLoadingPtr.Deref(game, out ret);
 
@@ -146,7 +146,7 @@ namespace LiveSplit.Shrek2
                         _isSavingPtr.Deref(game, out isSaving);
 
                         bool isLoading = (ret == 2 || isSaving == 256);
-                        
+
                         string log = String.Empty;
 
                         if ((!buf.Equals(prevBuf) && !prevBuf.Equals(String.Empty)))
@@ -336,9 +336,6 @@ namespace LiveSplit.Shrek2
             {
                 return null;
             }
-
-            if (game.Modules.Cast<ProcessModule>().FirstOrDefault(m => System.IO.Path.GetFileName(m.FileName).ToLower() == "core.dll") == null)
-                return null;
 
             if (game.MainModule.ModuleMemorySize != (int)ExpectedExeSizes.v433)
             {

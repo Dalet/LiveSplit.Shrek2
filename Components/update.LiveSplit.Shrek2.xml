@@ -1,4 +1,14 @@
 <updates>
+	 <update version="1.2.1">
+		  <files>
+				<file path="Components/LiveSplit.Shrek2.dll" status="changed"/>
+		  </files>
+		  <changelog>
+				<change>
+					 Fix LiveSplit 1.6 compatibility.
+				</change>
+		  </changelog>
+	 </update>
     <update version="1.2">
         <files>
             <file path="Components/LiveSplit.Shrek2.dll" status="changed"/>

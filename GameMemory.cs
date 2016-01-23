@@ -134,7 +134,7 @@ namespace LiveSplit.Shrek2
                     while (!game.HasExited)
                     {
                         string buf;
-                        _logBufferPtr.Deref(game, out buf, 4096);
+                        _logBufferPtr.DerefString(game, 4096, out buf);
 
                         int bufCursor;
                         _logBufferCursorPtr.Deref(game, out bufCursor);
